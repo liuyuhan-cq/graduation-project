@@ -1,0 +1,4 @@
+Model: RealESRGAN_x4plus
+Images: 100
+Average PSNR: 23.4753
+Average SSIM: 0.6194

@@ -1,0 +1,8 @@
+Model: Bicubic
+Images: 14
+Average PSNR: 25.0055
+Average SSIM: 0.7054
+PSNR outlier floor for supplementary stats: 10
+Dropped images (PSNR < floor): 0
+Filtered Average PSNR: 25.0055
+Filtered Average SSIM: 0.7054

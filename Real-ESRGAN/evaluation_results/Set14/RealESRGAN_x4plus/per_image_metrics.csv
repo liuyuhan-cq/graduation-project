@@ -1,0 +1,17 @@
+image,psnr,ssim
+baboon.png,19.6136,0.4063
+barbara.png,19.6996,0.6297
+bridge.png,21.5031,0.4698
+coastguard.png,22.9005,0.4507
+comic.png,19.1961,0.5410
+face.png,28.3777,0.7084
+flowers.png,24.1814,0.6931
+foreman.png,25.4361,0.8414
+lenna.png,28.5932,0.8054
+man.png,23.3089,0.6209
+monarch.png,26.3951,0.8837
+pepper.png,29.8867,0.8298
+ppt3.png,20.5873,0.8534
+zebra.png,21.8262,0.6156
+
+AVG,23.6790,0.6678

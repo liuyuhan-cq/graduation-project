@@ -1,0 +1,5 @@
+Model Comparison
+================
+Bicubic: PSNR=27.6918, SSIM=0.8102, LPIPS=27.6918
+RealESRGAN_x4plus: PSNR=25.4259, SSIM=0.7851, LPIPS=25.4259
+realesr-general-x4v3: PSNR=25.5326, SSIM=0.7933, LPIPS=25.5326

@@ -1,0 +1,8 @@
+Model: ESRGAN_x4
+Images: 14
+Average PSNR: 15.7702
+Average SSIM: 0.2534
+PSNR outlier floor for supplementary stats: 10
+Dropped images (PSNR < floor): 0
+Filtered Average PSNR: 15.7702
+Filtered Average SSIM: 0.2534

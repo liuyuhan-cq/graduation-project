@@ -1,0 +1,3 @@
+model,avg_psnr,avg_ssim
+RealESRGAN_x4plus,23.4753,0.6194
+realesr-general-x4v3,23.7871,0.6369

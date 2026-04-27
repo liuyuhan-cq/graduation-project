@@ -1,0 +1,10 @@
+Model: Bicubic
+Images: 100
+Average PSNR: 24.6329
+Average SSIM: 0.6648
+Average LPIPS: 0.5285
+PSNR outlier floor for supplementary stats: 10
+Dropped images (PSNR < floor): 0
+Filtered Average PSNR: 24.6329
+Filtered Average SSIM: 0.6648
+Filtered Average LPIPS: 0.5285

@@ -1,0 +1,4 @@
+Model Comparison
+================
+RealESRGAN_x4plus: PSNR=23.4753, SSIM=0.6194
+realesr-general-x4v3: PSNR=23.7871, SSIM=0.6369

@@ -1,0 +1,8 @@
+Model: realesr-general-x4v3
+Images: 14
+Average PSNR: 23.7539
+Average SSIM: 0.6827
+PSNR outlier floor for supplementary stats: 10
+Dropped images (PSNR < floor): 0
+Filtered Average PSNR: 23.7539
+Filtered Average SSIM: 0.6827

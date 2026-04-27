@@ -1,0 +1,9 @@
+image,psnr,ssim,lpips,is_outlier_by_psnr_floor
+baby.png,18.2553,0.3152,0.6971,0
+bird.png,19.1376,0.4421,0.4671,0
+butterfly.png,14.6949,0.3911,0.3191,0
+head.png,16.5295,0.2440,0.7796,0
+woman.png,17.7065,0.4427,0.4095,0
+
+AVG,17.2647,0.3670,0.5345,
+AVG(psnr>=10),17.2647,0.3670,0.5345,dropped=0

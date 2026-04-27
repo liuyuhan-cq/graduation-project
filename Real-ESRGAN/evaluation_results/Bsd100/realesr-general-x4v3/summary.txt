@@ -1,0 +1,4 @@
+Model: realesr-general-x4v3
+Images: 100
+Average PSNR: 23.7871
+Average SSIM: 0.6369

@@ -1,0 +1,8 @@
+image,psnr,ssim
+baby.png,25.2851,0.7448
+bird.png,27.6159,0.8491
+butterfly.png,20.8612,0.7827
+head.png,28.6464,0.7157
+woman.png,24.7210,0.8333
+
+AVG,25.4259,0.7851

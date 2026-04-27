@@ -1,0 +1,5 @@
+model,avg_psnr,avg_ssim,avg_lpips,avg_psnr_filtered,avg_ssim_filtered,avg_lpips_filtered,kept_count,dropped_count
+Bicubic,27.6918,0.8102,0.3470,27.6918,0.8102,0.3470,5,0
+ESRGAN_x4,17.2647,0.3670,0.5345,17.2647,0.3670,0.5345,5,0
+RealESRGAN_x4plus,25.4259,0.7851,0.1718,25.4259,0.7851,0.1718,5,0
+realesr-general-x4v3,25.5326,0.7933,0.1806,25.5326,0.7933,0.1806,5,0
