@@ -1,4 +1,4 @@
-# 基于Real-ESRGAN的图像超分辨率系统设计与实现
+[# 基于Real-ESRGAN的图像超分辨率系统设计与实现
 
 > 排版说明  
 > 1. 首页、诚信承诺书、版权声明等前置页面按学校模板单独填写。  
@@ -505,3 +505,4 @@ python .\evaluate.py --hr-dir .\datasets\Set14\HR --models Bicubic ESRGAN_x4 Rea
 
 python .\evaluate.py --hr-dir .\datasets\Bsd100\HR --models Bicubic ESRGAN_x4 RealESRGAN_x4plus realesr-general-x4v3 --output .\evaluation_results\Bsd100_4models_lpips --scale 4 --crop-border 4 --test-y-channel --calc-lpips --report-psnr-floor 10
 ```
+](https://chat.deepseek.com/a/chat/s/e9d8ef86-cd94-489e-849d-f1d73aa1609a)
