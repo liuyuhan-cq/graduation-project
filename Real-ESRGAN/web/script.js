@@ -1,4 +1,10 @@
-﻿const imageInput = document.getElementById('imageInput');
+const API_BASE = 'http://localhost:8000';
+
+const navButtons = document.querySelectorAll('.nav-btn');
+const pages = document.querySelectorAll('.page');
+const goUseBtn = document.getElementById('goUseBtn');
+
+const imageInput = document.getElementById('imageInput');
 const modelSelect = document.getElementById('modelSelect');
 const processBtn = document.getElementById('processBtn');
 const batchBtn = document.getElementById('batchBtn');
@@ -21,6 +27,14 @@ const batchSummaryActions = document.getElementById('batchSummaryActions');
 const allDownloadOutputBtn = document.getElementById('allDownloadOutputBtn');
 const allDownloadCompareBtn = document.getElementById('allDownloadCompareBtn');
 
+const testImageInput = document.getElementById('testImageInput');
+const testRunBtn = document.getElementById('testRunBtn');
+const testStatus = document.getElementById('testStatus');
+const testComparePreview = document.getElementById('testComparePreview');
+const testMetricBody = document.getElementById('testMetricBody');
+const testDownloadCompareBtn = document.getElementById('testDownloadCompareBtn');
+const testDownloadCsvBtn = document.getElementById('testDownloadCsvBtn');
+
 const modal = document.getElementById('imageModal');
 const modalImg = document.getElementById('modalImg');
 const modalClose = document.getElementById('modalClose');
@@ -35,6 +49,31 @@ let currentOutputSize = null;
 let currentModelName = null;
 let batchDownloadItems = [];
 let currentBatchId = null;
+
+let testSelectedFile = null;
+let testCompareBase64 = null;
+let testMetrics = [];
+let testCsvText = '';
+
+function showSection(sectionId) {
+    pages.forEach((page) => {
+        page.classList.toggle('active', page.id === sectionId);
+    });
+
+    navButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.target === sectionId);
+    });
+}
+
+if (navButtons.length) {
+    navButtons.forEach((btn) => {
+        btn.addEventListener('click', () => showSection(btn.dataset.target));
+    });
+}
+
+if (goUseBtn) {
+    goUseBtn.addEventListener('click', () => showSection('onlinePage'));
+}
 
 function showError(message) {
     statusDiv.textContent = message;
@@ -85,6 +124,11 @@ function downloadDataUrl(dataUrl, filename) {
     a.remove();
 }
 
+function downloadText(text, filename) {
+    const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+    downloadBlob(blob, filename);
+}
+
 function safeStem(name) {
     const base = String(name || 'image').replace(/\.[^.]+$/, '');
     return base.replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_');
@@ -96,7 +140,7 @@ async function downloadZipByBatch(batchId, kind) {
         return;
     }
 
-    const url = `http://localhost:8000/batch_download_zip/${encodeURIComponent(batchId)}/${kind}`;
+    const url = `${API_BASE}/batch_download_zip/${encodeURIComponent(batchId)}/${kind}`;
     const res = await fetch(url);
     if (!res.ok) {
         throw new Error(`ZIP 下载失败（${res.status}）`);
@@ -180,7 +224,7 @@ function renderBatchSummaryButtons() {
     batchSummaryActions.style.display = batchDownloadItems.length > 0 ? 'flex' : 'none';
 }
 
-imageInput.addEventListener('change', function () {
+if (imageInput) imageInput.addEventListener('change', function () {
     const file = this.files[0];
     if (!file) return;
 
@@ -195,7 +239,7 @@ imageInput.addEventListener('change', function () {
     reader.readAsDataURL(file);
 });
 
-batchImageInput.addEventListener('change', function () {
+if (batchImageInput) batchImageInput.addEventListener('change', function () {
     selectedFiles = Array.from(this.files || []);
 
     if (!selectedFiles.length) {
@@ -206,7 +250,7 @@ batchImageInput.addEventListener('change', function () {
     batchStatus.textContent = `已选择 ${selectedFiles.length} 张图片，点击“开始批量超分”执行`;
 });
 
-processBtn.addEventListener('click', async function () {
+if (processBtn) processBtn.addEventListener('click', async function () {
     if (!selectedFile) {
         showError('请先选择一张图片');
         return;
@@ -221,7 +265,7 @@ processBtn.addEventListener('click', async function () {
         formData.append('file', selectedFile);
         formData.append('model', modelSelect.value);
 
-        const response = await fetch('http://localhost:8000/process', {
+        const response = await fetch(`${API_BASE}/process`, {
             method: 'POST',
             body: formData
         });
@@ -248,14 +292,13 @@ processBtn.addEventListener('click', async function () {
 
         statusDiv.textContent = `处理完成，使用模型：${data.model}`;
     } catch (err) {
-        console.error(err);
         showError(`处理失败：${err.message}`);
     } finally {
         processBtn.disabled = false;
     }
 });
 
-downloadInputBtn.addEventListener('click', function () {
+if (downloadInputBtn) downloadInputBtn.addEventListener('click', function () {
     if (!inputDataUrl) {
         showError('暂无原图可下载');
         return;
@@ -264,7 +307,7 @@ downloadInputBtn.addEventListener('click', function () {
     downloadDataUrl(inputDataUrl, selectedFile ? selectedFile.name : 'input.png');
 });
 
-downloadOutputBtn.addEventListener('click', function () {
+if (downloadOutputBtn) downloadOutputBtn.addEventListener('click', function () {
     if (!outputBase64) {
         showError('暂无超分结果可下载');
         return;
@@ -275,7 +318,7 @@ downloadOutputBtn.addEventListener('click', function () {
     downloadBlob(blob, `${modelName}_output.png`);
 });
 
-downloadCompareBtn.addEventListener('click', async function () {
+if (downloadCompareBtn) downloadCompareBtn.addEventListener('click', async function () {
     if (compareBase64) {
         const blob = base64ToBlob(compareBase64);
         const modelName = currentModelName || modelSelect.value || 'RealESRGAN';
@@ -297,11 +340,11 @@ downloadCompareBtn.addEventListener('click', async function () {
     }
 });
 
-batchBtn.addEventListener('click', function () {
+if (batchBtn) batchBtn.addEventListener('click', function () {
     batchImageInput.click();
 });
 
-batchProcessBtn.addEventListener('click', async function () {
+if (batchProcessBtn) batchProcessBtn.addEventListener('click', async function () {
     if (!selectedFiles.length) {
         batchStatus.textContent = '请先选择至少一张图片';
         return;
@@ -319,7 +362,7 @@ batchProcessBtn.addEventListener('click', async function () {
         selectedFiles.forEach((file) => formData.append('files', file));
         formData.append('model', modelSelect.value);
 
-        const response = await fetch('http://localhost:8000/batch_process', {
+        const response = await fetch(`${API_BASE}/batch_process`, {
             method: 'POST',
             body: formData
         });
@@ -371,14 +414,13 @@ batchProcessBtn.addEventListener('click', async function () {
 
         renderBatchSummaryButtons();
     } catch (err) {
-        console.error(err);
         batchStatus.textContent = `批量处理失败：${err.message}`;
     } finally {
         batchProcessBtn.disabled = false;
     }
 });
 
-allDownloadOutputBtn.addEventListener('click', function () {
+if (allDownloadOutputBtn) allDownloadOutputBtn.addEventListener('click', function () {
     downloadZipByBatch(currentBatchId, 'output')
         .then(() => {
             batchStatus.textContent = '超分结果 ZIP 已开始下载';
@@ -388,7 +430,7 @@ allDownloadOutputBtn.addEventListener('click', function () {
         });
 });
 
-allDownloadCompareBtn.addEventListener('click', function () {
+if (allDownloadCompareBtn) allDownloadCompareBtn.addEventListener('click', function () {
     downloadZipByBatch(currentBatchId, 'compare')
         .then(() => {
             batchStatus.textContent = '对比图 ZIP 已开始下载';
@@ -398,21 +440,137 @@ allDownloadCompareBtn.addEventListener('click', function () {
         });
 });
 
-inputPreview.addEventListener('click', function () {
+function formatMetricValue(value) {
+    if (value === null || value === undefined || Number.isNaN(value)) return '--';
+    return Number(value).toFixed(4);
+}
+
+function getBestModelNames(metrics, key, lowerIsBetter = false) {
+    const valid = metrics.filter((m) => typeof m[key] === 'number');
+    if (!valid.length) return new Set();
+    const bestValue = lowerIsBetter
+        ? Math.min(...valid.map((m) => m[key]))
+        : Math.max(...valid.map((m) => m[key]));
+    return new Set(valid.filter((m) => Math.abs(m[key] - bestValue) < 1e-8).map((m) => m.model));
+}
+
+function renderTestMetrics(metrics) {
+    testMetricBody.innerHTML = '';
+    if (!metrics.length) {
+        testMetricBody.innerHTML = '<tr><td colspan="5">暂无测试结果</td></tr>';
+        return;
+    }
+
+    const bestPsnr = getBestModelNames(metrics, 'psnr', false);
+    const bestSsim = getBestModelNames(metrics, 'ssim', false);
+    const bestLpips = getBestModelNames(metrics, 'lpips', true);
+    const bestTime = getBestModelNames(metrics, 'time_ms', true);
+
+    metrics.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${item.model}</td>
+            <td class="${bestPsnr.has(item.model) ? 'metric-best' : ''}">${formatMetricValue(item.psnr)}</td>
+            <td class="${bestSsim.has(item.model) ? 'metric-best' : ''}">${formatMetricValue(item.ssim)}</td>
+            <td class="${bestLpips.has(item.model) ? 'metric-best' : ''}">${formatMetricValue(item.lpips)}</td>
+            <td class="${bestTime.has(item.model) ? 'metric-best' : ''}">${formatMetricValue(item.time_ms)}</td>
+        `;
+        testMetricBody.appendChild(tr);
+    });
+}
+
+if (testImageInput) testImageInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    testSelectedFile = file;
+    testStatus.classList.remove('error');
+    testStatus.textContent = `已选择：${file.name}`;
+});
+
+if (testRunBtn) testRunBtn.addEventListener('click', async function () {
+    if (!testSelectedFile) {
+        testStatus.classList.add('error');
+        testStatus.textContent = '请先选择一张测试图片';
+        return;
+    }
+
+    testRunBtn.disabled = true;
+    testStatus.classList.remove('error');
+    testStatus.textContent = '测试进行中，请稍候...';
+
+    try {
+        const formData = new FormData();
+        formData.append('file', testSelectedFile);
+
+        const response = await fetch(`${API_BASE}/test_compare`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        if (!response.ok || data.error) {
+            throw new Error(data.error || '测试失败');
+        }
+
+        testCompareBase64 = data.compare;
+        testMetrics = data.metrics || [];
+        testCsvText = data.csv_text || '';
+
+        testComparePreview.src = `data:image/png;base64,${testCompareBase64}`;
+        renderTestMetrics(testMetrics);
+
+        const lpipsMode = data.lpips_mode || 'unknown';
+        testStatus.textContent = `测试完成：${data.input_size[0]} × ${data.input_size[1]} -> LR ${data.lr_size[0]} × ${data.lr_size[1]}（LPIPS模式：${lpipsMode}）`;
+    } catch (err) {
+        testStatus.classList.add('error');
+        testStatus.textContent = `测试失败：${err.message}`;
+    } finally {
+        testRunBtn.disabled = false;
+    }
+});
+
+if (testDownloadCompareBtn) testDownloadCompareBtn.addEventListener('click', function () {
+    if (!testCompareBase64) {
+        testStatus.classList.add('error');
+        testStatus.textContent = '暂无可下载的测试对比图';
+        return;
+    }
+    const blob = base64ToBlob(testCompareBase64);
+    const stem = safeStem(testSelectedFile ? testSelectedFile.name : 'test');
+    downloadBlob(blob, `${stem}_4models_compare.png`);
+});
+
+if (testDownloadCsvBtn) testDownloadCsvBtn.addEventListener('click', function () {
+    if (!testCsvText) {
+        testStatus.classList.add('error');
+        testStatus.textContent = '暂无可下载的指标CSV';
+        return;
+    }
+    const stem = safeStem(testSelectedFile ? testSelectedFile.name : 'test');
+    downloadText(testCsvText, `${stem}_4models_metrics.csv`);
+});
+
+if (inputPreview) inputPreview.addEventListener('click', function () {
     if (inputPreview.src) {
         openModal(inputPreview.src);
     }
 });
 
-outputPreview.addEventListener('click', function () {
+if (outputPreview) outputPreview.addEventListener('click', function () {
     if (outputPreview.src) {
         openModal(outputPreview.src);
     }
 });
 
-modalClose.addEventListener('click', closeModal);
+if (testComparePreview) testComparePreview.addEventListener('click', function () {
+    if (testComparePreview.src) {
+        openModal(testComparePreview.src);
+    }
+});
 
-modal.addEventListener('click', function (e) {
+if (modalClose) modalClose.addEventListener('click', closeModal);
+
+if (modal) modal.addEventListener('click', function (e) {
     if (e.target === modal) {
         closeModal();
     }
